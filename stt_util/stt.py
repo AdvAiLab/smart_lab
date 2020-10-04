@@ -1,23 +1,22 @@
 from http.client import BadStatusLine
 
 import speech_recognition as sr
-from gtts import gTTS
-
-from chromecast.cast import LabCast
 
 
 class STT:
     def __init__(self):
         self.r = sr.Recognizer()
+        print(sr.Microphone.list_microphone_names())
 
     def run(self, lang="zh-TW"):
         is_first = True
         while True:
-            with sr.Microphone() as source:
-                if is_first:
-                    print("Say something")
-                self.r.adjust_for_ambient_noise(source)
+            with sr.Microphone(device_index=10) as source:
+                print("Say something")
+                self.r.adjust_for_ambient_noise(source, duration=5)
                 audio = self.r.listen(source)
+                print("listened")
+
             try:
                 speech_text = self.r.recognize_google(audio, language=lang)
                 print('text: %s' % speech_text)
@@ -32,7 +31,7 @@ class STT:
 
 if __name__ == '__main__':
     stt = STT()
-    lc = LabCast()
+    # lc = LabCast()
     while True:
         speech_text = stt.run()
-        lc.say_tts(speech_text)
+        # lc.say_tts(speech_text)
